@@ -4,9 +4,10 @@ export interface PostRow {
   id?: string;
   post_type?: string;
   category?: string;
-  district?: string;
+  district?: string | null;
   title?: string;
   description?: string;
+  image_url?: string | null;
   bank_name?: string | null;
   status?: string;
   report_count?: number;
@@ -27,17 +28,20 @@ export type PublicPostListItem = PostPublic & {
 };
 
 export function mapPostRow(row: PostRow | null | undefined): PublicPostListItem | null {
-  if (!row?.id || !row.post_type || !row.title || !row.description) {
+  if (!row?.id || !row.title || !row.description) {
     return null;
   }
 
+  const postType = row.post_type === "offer" ? "offer" : "need";
+
   return {
     id: row.id,
-    post_type: row.post_type as PostPublic["post_type"],
-    category: (row.category ?? "other") as PostPublic["category"],
-    district: row.district ?? "",
+    post_type: postType,
+    category: row.category ?? "Інше",
+    district: row.district ?? null,
     title: row.title,
     description: row.description,
+    image_url: row.image_url ?? null,
     bank_name: row.bank_name ?? null,
     status: row.status ?? "active",
     report_count: row.report_count ?? 0,

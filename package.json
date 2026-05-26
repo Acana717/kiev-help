@@ -14,6 +14,7 @@
     "test": "ts-node scripts/verify-ads.ts",
     "test:ads": "ts-node scripts/verify-real-flow.ts",
     "db:views": "ts-node scripts/apply-views-migration.ts",
+    "db:media": "ts-node scripts/apply-media-migration.ts",
     "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/clean.ps1"
   },
   "ts-node": {

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { PostPublic } from "@/lib/types";
 import { fetchJson } from "@/lib/fetch-json";
-import { categoryLabel, formatRelativeTime, postTypeLabel } from "@/lib/labels";
+import { categoryLabel, formatRelativeTime } from "@/lib/labels";
 import { SERVER_UNAVAILABLE_MESSAGE } from "@/lib/messages";
 import { PostViewsCounter } from "./PostViewsCounter";
 import { RevealContacts } from "./RevealContacts";
@@ -83,46 +84,63 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
         <span aria-hidden>←</span> До стрічки
       </Link>
 
-      <div className="kh-card space-y-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <span className="kh-badge">{postTypeLabel(post.post_type)}</span>
-          <div className="flex flex-wrap items-center gap-3">
-            <PostViewsCounter postId={post.id} initialCount={post.views_count} />
-            <time className="kh-meta" dateTime={post.created_at}>
-              {formatRelativeTime(post.created_at)}
-            </time>
+      <div className="kh-card overflow-hidden p-0">
+        {post.image_url && (
+          <div className="relative aspect-[16/10] w-full bg-black">
+            <Image
+              src={post.image_url}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 576px) 100vw, 576px"
+              priority
+            />
           </div>
-        </div>
-
-        <header className="space-y-2">
-          <h1 className="font-bebas text-3xl leading-tight tracking-wide text-foreground sm:text-4xl">
-            {post.title}
-          </h1>
-          <p className="flex flex-wrap gap-2 text-sm text-neutral-500">
-            <span>{post.district}</span>
-            <span aria-hidden>·</span>
-            <span>{categoryLabel(post.category)}</span>
-          </p>
-        </header>
-
-        <p className="whitespace-pre-wrap text-base leading-relaxed text-neutral-300">
-          {post.description}
-        </p>
-
-        {post.bank_name && (
-          <p className="text-sm text-neutral-500">Банк: {post.bank_name}</p>
         )}
 
-        <RevealContacts
-          postId={post.id}
-          hasPhone={!!post.has_phone}
-          hasTelegram={!!post.has_telegram}
-          hasCard={!!post.has_card}
-          hasJar={!!post.has_jar}
-          bankName={post.bank_name}
-        />
+        <div className="space-y-5 p-5 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              <span className="kh-badge">{categoryLabel(post.category)}</span>
+              {post.district && (
+                <span className="kh-badge border-neutral-700/80 text-neutral-400">
+                  {post.district}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <PostViewsCounter postId={post.id} initialCount={post.views_count} />
+              <time className="kh-meta" dateTime={post.created_at}>
+                {formatRelativeTime(post.created_at)}
+              </time>
+            </div>
+          </div>
 
-        <ReportButton postId={post.id} />
+          <header className="space-y-2">
+            <h1 className="font-bebas text-3xl leading-tight tracking-wide text-foreground sm:text-4xl">
+              {post.title}
+            </h1>
+          </header>
+
+          <p className="whitespace-pre-wrap text-base leading-relaxed text-neutral-300">
+            {post.description}
+          </p>
+
+          {post.bank_name && (
+            <p className="text-sm text-neutral-500">Банк: {post.bank_name}</p>
+          )}
+
+          <RevealContacts
+            postId={post.id}
+            hasPhone={!!post.has_phone}
+            hasTelegram={!!post.has_telegram}
+            hasCard={!!post.has_card}
+            hasJar={!!post.has_jar}
+            bankName={post.bank_name}
+          />
+
+          <ReportButton postId={post.id} />
+        </div>
       </div>
     </article>
   );

@@ -5,7 +5,10 @@ import { MAX_POSTS_PER_HOUR } from "@/lib/constants";
 import type { CreatePostPayload } from "@/lib/types";
 import { verifyCaptchaToken } from "@/lib/captcha";
 import { mapPostRows, type PostRow } from "@/lib/post-mapper";
-import { validateCreatePostBody } from "@/lib/validators";
+import {
+  postTypeFromCategory,
+  validateCreatePostBody,
+} from "@/lib/validators";
 import {
   isSupabaseConfigured,
   withServiceClient,
@@ -18,6 +21,9 @@ import {
 } from "@/lib/api-response";
 import { SERVER_UNAVAILABLE_MESSAGE } from "@/lib/messages";
 
+const POST_SELECT =
+  "id, post_type, category, district, title, description, image_url, bank_name, status, report_count, views_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc";
+
 export async function GET(request: NextRequest) {
   return safeApiHandler(async () => {
     if (!isSupabaseConfigured()) {
@@ -25,7 +31,6 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = request.nextUrl;
-    const post_type = searchParams.get("post_type");
     const category = searchParams.get("category");
     const district = searchParams.get("district");
     const q = searchParams.get("q");
@@ -34,14 +39,11 @@ export async function GET(request: NextRequest) {
       async (supabase) => {
         let query = supabase
           .from("posts")
-          .select(
-            "id, post_type, category, district, title, description, bank_name, status, report_count, views_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc"
-          )
+          .select(POST_SELECT)
           .eq("status", "active")
           .order("created_at", { ascending: false })
           .limit(50);
 
-        if (post_type) query = query.eq("post_type", post_type);
         if (category) query = query.eq("category", category);
         if (district) query = query.eq("district", district);
         if (q) {
@@ -144,15 +146,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const postType = postTypeFromCategory(body.category);
+
     const { result: id, ok } = await withServiceClient(async (supabase) => {
       const { data, error } = await supabase
         .from("posts")
         .insert({
-          post_type: body.post_type,
+          post_type: postType,
           category: body.category,
           district: body.district.trim(),
           title: body.title.trim(),
           description: body.description.trim(),
+          image_url: body.image_url?.trim() || null,
           phone_enc: body.phone?.trim() || null,
           telegram_enc: body.telegram?.trim() || null,
           card_number_enc: body.card_number?.trim() || null,

@@ -9,7 +9,7 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const POST_SELECT =
-  "id, post_type, category, district, title, description, bank_name, status, report_count, views_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc";
+  "id, post_type, category, district, title, description, image_url, bank_name, status, report_count, views_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc";
 
 export async function GET(
   _request: NextRequest,

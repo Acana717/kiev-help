@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { WarningBanner } from "@/components/WarningBanner";
 import { HomeHero } from "@/components/HomeHero";
 import { FeedList } from "@/components/FeedList";
@@ -14,7 +15,9 @@ export default function HomePage() {
             <h2 className="kh-section-title">Оголошення</h2>
             <span className="kh-meta hidden sm:inline">Оновлюється в реальному часі</span>
           </div>
-          <FeedList />
+          <Suspense fallback={null}>
+            <FeedList />
+          </Suspense>
         </section>
       </div>
     </PageShell>

@@ -12,18 +12,12 @@ export const KYIV_DISTRICTS = [
   "Шевченківський",
 ] as const;
 
-export const HELP_CATEGORIES = [
-  { value: "housing", label: "Житло" },
-  { value: "transport", label: "Транспорт" },
-  { value: "debris", label: "Розбір завалів" },
-  { value: "medicine", label: "Медикаменти" },
-  { value: "finance", label: "Фінансова допомога" },
-  { value: "other", label: "Інше" },
-] as const;
-
-export const POST_TYPES = [
-  { value: "need", label: "Потрібна допомога" },
-  { value: "offer", label: "Можу допомогти" },
+/** Категорії оголошень (зберігаються в posts.category як TEXT) */
+export const LISTING_CATEGORIES = [
+  "Пропоную допомогу",
+  "Шукаю допомогу",
+  "Волонтерство",
+  "Інше",
 ] as const;
 
 export const BANKS = [
@@ -40,3 +34,24 @@ export const WARNING_BANNER =
 
 export const MAX_POSTS_PER_HOUR = 3;
 export const REVEAL_COOLDOWN_MS = 2000;
+
+export const POST_IMAGES_BUCKET = "post-images";
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+] as const;
+
+/** @deprecated use LISTING_CATEGORIES */
+export const HELP_CATEGORIES = LISTING_CATEGORIES.map((label) => ({
+  value: label,
+  label,
+}));
+
+/** @deprecated derived from category on server */
+export const POST_TYPES = [
+  { value: "need", label: "Потрібна допомога" },
+  { value: "offer", label: "Можу допомогти" },
+] as const;

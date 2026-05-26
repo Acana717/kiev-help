@@ -1,19 +1,22 @@
 export type PostType = "need" | "offer";
-export type HelpCategory =
-  | "housing"
-  | "transport"
-  | "debris"
-  | "medicine"
-  | "finance"
-  | "other";
+
+export type ListingCategory =
+  | "Пропоную допомогу"
+  | "Шукаю допомогу"
+  | "Волонтерство"
+  | "Інше";
+
+/** @deprecated use ListingCategory */
+export type HelpCategory = ListingCategory;
 
 export interface PostPublic {
   id: string;
   post_type: PostType;
-  category: HelpCategory;
-  district: string;
+  category: ListingCategory | string;
+  district: string | null;
   title: string;
   description: string;
+  image_url: string | null;
   bank_name: string | null;
   status: string;
   report_count: number;
@@ -30,18 +33,17 @@ export interface PostReveal {
 }
 
 export interface FeedFiltersState {
-  post_type: string;
   category: string;
   district: string;
   q: string;
 }
 
 export interface CreatePostPayload {
-  post_type: PostType;
-  category: HelpCategory;
+  category: ListingCategory | string;
   district: string;
   title: string;
   description: string;
+  image_url?: string;
   phone?: string;
   telegram?: string;
   card_number?: string;
@@ -49,4 +51,9 @@ export interface CreatePostPayload {
   jar_link?: string;
   captcha_answer: number;
   captcha_token: string;
+}
+
+export interface AdminPostRow extends PostPublic {
+  has_phone: boolean;
+  has_telegram: boolean;
 }

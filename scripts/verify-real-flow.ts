@@ -53,7 +53,7 @@ async function main(): Promise<void> {
 
   const testRow = {
     post_type: "need" as const,
-    category: "other" as const,
+    category: "Інше" as const,
     district: "Печersk",
     title: TEST_TITLE,
     description: "Live integration check for KYIVHELP posts table.",

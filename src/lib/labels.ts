@@ -1,21 +1,12 @@
-import type { HelpCategory, PostType } from "./types";
-
-const CATEGORY_LABELS: Record<HelpCategory, string> = {
-  housing: "Житло",
-  transport: "Транспорт",
-  debris: "Розбір завалів",
-  medicine: "Медикаменти",
-  finance: "Фінанси",
-  other: "Інше",
-};
+import type { PostType } from "./types";
 
 const TYPE_LABELS: Record<PostType, string> = {
   need: "Потрібна допомога",
   offer: "Можу допомогти",
 };
 
-export function categoryLabel(c: HelpCategory): string {
-  return CATEGORY_LABELS[c] ?? c;
+export function categoryLabel(c: string): string {
+  return c || "Інше";
 }
 
 export function postTypeLabel(t: PostType): string {
@@ -31,4 +22,14 @@ export function formatRelativeTime(iso: string): string {
   if (hours < 24) return `${hours} год тому`;
   const days = Math.floor(hours / 24);
   return `${days} дн тому`;
+}
+
+export function statusLabel(status: string): string {
+  const map: Record<string, string> = {
+    active: "Активне",
+    fulfilled: "Виконано",
+    hidden: "Приховано",
+    removed: "Видалено",
+  };
+  return map[status] ?? status;
 }

@@ -1,17 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { FeedFiltersState, PostPublic } from "@/lib/types";
 import { fetchJson } from "@/lib/fetch-json";
 import { FeedFilters } from "./FeedFilters";
 import { PostCard } from "./PostCard";
-
-const initialFilters: FeedFiltersState = {
-  post_type: "",
-  category: "",
-  district: "",
-  q: "",
-};
 
 type FeedPost = PostPublic & {
   has_phone?: boolean;
@@ -25,13 +19,24 @@ type PostsResponse = {
   degraded?: boolean;
 };
 
+function filtersFromParams(params: URLSearchParams): FeedFiltersState {
+  return {
+    category: params.get("category") ?? "",
+    district: params.get("district") ?? "",
+    q: params.get("q") ?? "",
+  };
+}
+
+function paramsFromFilters(filters: FeedFiltersState): URLSearchParams {
+  const params = new URLSearchParams();
+  if (filters.category) params.set("category", filters.category);
+  if (filters.district) params.set("district", filters.district);
+  if (filters.q.trim()) params.set("q", filters.q.trim());
+  return params;
+}
+
 function hasActiveFilters(filters: FeedFiltersState): boolean {
-  return !!(
-    filters.post_type ||
-    filters.category ||
-    filters.district ||
-    filters.q.trim()
-  );
+  return !!(filters.category || filters.district || filters.q.trim());
 }
 
 function isFeedBackendUnavailable(
@@ -44,20 +49,34 @@ function isFeedBackendUnavailable(
 }
 
 export function FeedList() {
-  const [filters, setFilters] = useState<FeedFiltersState>(initialFilters);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [filters, setFilters] = useState<FeedFiltersState>(() =>
+    filtersFromParams(searchParams)
+  );
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedAvailable, setFeedAvailable] = useState(false);
 
+  useEffect(() => {
+    setFilters(filtersFromParams(searchParams));
+  }, [searchParams]);
+
+  const updateFilters = useCallback(
+    (next: FeedFiltersState) => {
+      setFilters(next);
+      const qs = paramsFromFilters(next).toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router]
+  );
+
   const load = useCallback(async () => {
     setLoading(true);
 
-    const params = new URLSearchParams();
-    if (filters.post_type) params.set("post_type", filters.post_type);
-    if (filters.category) params.set("category", filters.category);
-    if (filters.district) params.set("district", filters.district);
-    if (filters.q.trim()) params.set("q", filters.q.trim());
-
+    const params = paramsFromFilters(filters);
     const { ok, data, serviceUnavailable } = await fetchJson<PostsResponse>(
       `/api/posts?${params.toString()}`
     );
@@ -88,7 +107,7 @@ export function FeedList() {
 
   return (
     <div className="space-y-6">
-      <FeedFilters value={filters} onChange={setFilters} />
+      <FeedFilters value={filters} onChange={updateFilters} />
       {empty && (
         <div className="rounded-2xl border border-dashed border-neutral-800/90 bg-surface/50 px-6 py-14 text-center">
           <p className="text-base text-foreground">

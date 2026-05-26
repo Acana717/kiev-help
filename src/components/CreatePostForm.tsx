@@ -4,20 +4,22 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BANKS,
-  HELP_CATEGORIES,
   KYIV_DISTRICTS,
-  POST_TYPES,
+  LISTING_CATEGORIES,
 } from "@/lib/constants";
-import type { HelpCategory, PostType } from "@/lib/types";
+import type { ListingCategory } from "@/lib/types";
 import { fetchJson } from "@/lib/fetch-json";
 import { SERVER_UNAVAILABLE_MESSAGE } from "@/lib/messages";
+import { uploadPostImage } from "@/lib/upload-image";
 import { FormField, fieldClass } from "@/components/ui/FormField";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 type FieldErrors = {
   title?: string;
   description?: string;
   contact?: string;
   captcha?: string;
+  image?: string;
 };
 
 function Spinner() {
@@ -53,11 +55,12 @@ export function CreatePostForm() {
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
 
-  const [postType, setPostType] = useState<PostType>("need");
-  const [category, setCategory] = useState<HelpCategory>("other");
+  const [category, setCategory] = useState<ListingCategory>("Шукаю допомогу");
   const [district, setDistrict] = useState("Шевченківський");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [phone, setPhone] = useState("");
   const [telegram, setTelegram] = useState("");
   const [showPayment, setShowPayment] = useState(false);
@@ -111,15 +114,26 @@ export function CreatePostForm() {
     const answer = parseInt(captchaInput, 10);
     setLoading(true);
 
+    let imageUrl: string | undefined;
+    if (imageFile) {
+      const { url, error: uploadError } = await uploadPostImage(imageFile);
+      if (uploadError || !url) {
+        setLoading(false);
+        setErrors((prev) => ({ ...prev, image: uploadError ?? "Не вдалося завантажити фото" }));
+        return;
+      }
+      imageUrl = url;
+    }
+
     const { ok, error: err } = await fetchJson<{ id: string }>("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        post_type: postType,
         category,
         district,
         title: title.trim(),
         description: description.trim(),
+        image_url: imageUrl,
         phone: phone.trim() || undefined,
         telegram: telegram.trim() || undefined,
         card_number: showPayment
@@ -147,49 +161,19 @@ export function CreatePostForm() {
     <form onSubmit={handleSubmit} className="animate-form-enter space-y-6 pb-10">
       <section className="kh-card animate-slide-up">
         <h2 className="kh-section-kicker">Крок 1</h2>
-        <p className="mt-2 kh-section-title text-xl sm:text-2xl">Що вам потрібно?</p>
-        <div className="mt-5 grid grid-cols-1 gap-3">
-          {POST_TYPES.map((t) => (
-            <label
-              key={t.value}
-              className={`flex cursor-pointer items-center gap-4 rounded-xl border px-5 py-4 transition-all duration-200 ease-out ${
-                postType === t.value
-                  ? "border-foreground/30 bg-black shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset]"
-                  : "border-neutral-800/90 hover:border-neutral-600"
-              }`}
-            >
-              <input
-                type="radio"
-                name="post_type"
-                value={t.value}
-                checked={postType === t.value}
-                onChange={() => setPostType(t.value as PostType)}
-                className="h-5 w-5 shrink-0"
-              />
-              <span className="text-base text-foreground">{t.label}</span>
-            </label>
-          ))}
-        </div>
-      </section>
-
-      <section
-        className="kh-card animate-slide-up"
-        style={{ animationDelay: "50ms" }}
-      >
-        <h2 className="kh-section-kicker">Крок 2</h2>
-        <p className="mt-2 kh-section-title text-xl sm:text-2xl">Деталі</p>
+        <p className="mt-2 kh-section-title text-xl sm:text-2xl">Деталі оголошення</p>
         <div className="mt-5 space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Категорія" htmlFor="category" required>
               <select
                 id="category"
                 value={category}
-                onChange={(e) => setCategory(e.target.value as HelpCategory)}
+                onChange={(e) => setCategory(e.target.value as ListingCategory)}
                 className={fieldClass(false)}
               >
-                {HELP_CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
+                {LISTING_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
                   </option>
                 ))}
               </select>
@@ -209,6 +193,17 @@ export function CreatePostForm() {
               </select>
             </FormField>
           </div>
+
+          <FormField label="Фото" htmlFor="image" error={submitted ? errors.image : undefined}>
+            <ImageUploadField
+              file={imageFile}
+              previewUrl={imagePreview}
+              onChange={(file, preview) => {
+                setImageFile(file);
+                setImagePreview(preview);
+              }}
+            />
+          </FormField>
 
           <FormField
             label="Заголовок"
@@ -242,7 +237,7 @@ export function CreatePostForm() {
               rows={5}
               maxLength={2000}
               placeholder="Опишіть ситуацію простими словами..."
-              className={`${fieldClass(!!(submitted && errors.description))} resize-y min-h-[120px]`}
+              className={`${fieldClass(!!(submitted && errors.description))} min-h-[120px] resize-y`}
               aria-invalid={!!(submitted && errors.description)}
             />
           </FormField>
@@ -251,9 +246,9 @@ export function CreatePostForm() {
 
       <section
         className="kh-card animate-slide-up"
-        style={{ animationDelay: "100ms" }}
+        style={{ animationDelay: "50ms" }}
       >
-        <h2 className="kh-section-kicker">Крок 3</h2>
+        <h2 className="kh-section-kicker">Крок 2</h2>
         <p className="mt-2 kh-section-title text-xl sm:text-2xl">
           Як з вами зв&apos;язатися
         </p>
@@ -293,7 +288,7 @@ export function CreatePostForm() {
 
       <section
         className="kh-card animate-slide-up"
-        style={{ animationDelay: "150ms" }}
+        style={{ animationDelay: "100ms" }}
       >
         <label className="flex cursor-pointer items-start gap-4">
           <input
@@ -315,46 +310,46 @@ export function CreatePostForm() {
         {showPayment && (
           <div className="animate-panel-open overflow-hidden">
             <div className="mt-5 space-y-5 rounded-xl border border-neutral-800/90 bg-black p-5">
-                <FormField
-                  label="Номер картки"
-                  htmlFor="card"
-                  hint="Без CVV та терміну дії"
+              <FormField
+                label="Номер картки"
+                htmlFor="card"
+                hint="Без CVV та терміну дії"
+              >
+                <input
+                  id="card"
+                  type="text"
+                  inputMode="numeric"
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(e.target.value)}
+                  placeholder="5375 …"
+                  className={`${fieldClass(false)} font-mono`}
+                />
+              </FormField>
+              <FormField label="Банк" htmlFor="bank">
+                <select
+                  id="bank"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  className={fieldClass(false)}
                 >
-                  <input
-                    id="card"
-                    type="text"
-                    inputMode="numeric"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    placeholder="5375 …"
-                    className={`${fieldClass(false)} font-mono`}
-                  />
-                </FormField>
-                <FormField label="Банк" htmlFor="bank">
-                  <select
-                    id="bank"
-                    value={bankName}
-                    onChange={(e) => setBankName(e.target.value)}
-                    className={fieldClass(false)}
-                  >
-                    <option value="">Оберіть банк</option>
-                    {BANKS.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                </FormField>
-                <FormField label="Посилання на банку" htmlFor="jar">
-                  <input
-                    id="jar"
-                    type="url"
-                    value={jarLink}
-                    onChange={(e) => setJarLink(e.target.value)}
-                    placeholder="https://send.monobank.ua/..."
-                    className={fieldClass(false)}
-                  />
-                </FormField>
+                  <option value="">Оберіть банк</option>
+                  {BANKS.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+              <FormField label="Посилання на банку" htmlFor="jar">
+                <input
+                  id="jar"
+                  type="url"
+                  value={jarLink}
+                  onChange={(e) => setJarLink(e.target.value)}
+                  placeholder="https://send.monobank.ua/..."
+                  className={fieldClass(false)}
+                />
+              </FormField>
             </div>
           </div>
         )}
@@ -362,7 +357,7 @@ export function CreatePostForm() {
 
       <section
         className="kh-card animate-slide-up"
-        style={{ animationDelay: "200ms" }}
+        style={{ animationDelay: "150ms" }}
       >
         <FormField
           label={`Перевірка: скільки буде ${captchaA} + ${captchaB}?`}
@@ -399,7 +394,7 @@ export function CreatePostForm() {
         {loading ? (
           <>
             <Spinner />
-            <span>Відправляємо заявку…</span>
+            <span>{imageFile ? "Завантажуємо фото…" : "Відправляємо заявку…"}</span>
           </>
         ) : (
           "Опублікувати оголошення"
