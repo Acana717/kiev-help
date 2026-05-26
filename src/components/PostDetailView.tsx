@@ -8,6 +8,7 @@ import { fetchJson } from "@/lib/fetch-json";
 import { categoryLabel, formatRelativeTime } from "@/lib/labels";
 import { SERVER_UNAVAILABLE_MESSAGE } from "@/lib/messages";
 import { PostViewsCounter } from "./PostViewsCounter";
+import { DescriptionText } from "./DescriptionText";
 import { RevealContacts } from "./RevealContacts";
 import { ReportButton } from "./ReportButton";
 
@@ -122,9 +123,10 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
             </h1>
           </header>
 
-          <p className="whitespace-pre-wrap text-base leading-relaxed text-neutral-300">
-            {post.description}
-          </p>
+          <DescriptionText
+            text={post.description}
+            className="text-base text-neutral-300"
+          />
 
           {post.bank_name && (
             <p className="text-sm text-neutral-500">Банк: {post.bank_name}</p>

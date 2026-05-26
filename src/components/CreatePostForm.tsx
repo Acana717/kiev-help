@@ -11,6 +11,7 @@ import type { ListingCategory } from "@/lib/types";
 import { fetchJson } from "@/lib/fetch-json";
 import { SERVER_UNAVAILABLE_MESSAGE } from "@/lib/messages";
 import { uploadPostImage } from "@/lib/upload-image";
+import { validateDescriptionLinks } from "@/lib/description-links";
 import { FormField, fieldClass } from "@/components/ui/FormField";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
@@ -91,6 +92,9 @@ export function CreatePostForm() {
     }
     if (!description.trim() || description.trim().length < 10) {
       next.description = "Опишіть ситуацію детальніше (мінімум 10 символів)";
+    } else {
+      const linkError = validateDescriptionLinks(description);
+      if (linkError) next.description = linkError;
     }
     if (!phone.trim() && !telegram.trim()) {
       next.contact = "Потрібен телефон або Telegram — без цього вас не зможуть знайти";

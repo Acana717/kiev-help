@@ -1,4 +1,5 @@
 import { LISTING_CATEGORIES } from "./constants";
+import { validateDescriptionLinks } from "./description-links";
 import type { CreatePostPayload, PostType } from "./types";
 
 const CATEGORIES = new Set<string>(LISTING_CATEGORIES);
@@ -33,6 +34,11 @@ export function validateCreatePostBody(
   const description = body.description?.trim() ?? "";
   if (description.length < 10 || description.length > 2000) {
     return "Опис має бути від 10 до 2000 символів";
+  }
+
+  const descriptionLinkError = validateDescriptionLinks(description);
+  if (descriptionLinkError) {
+    return descriptionLinkError;
   }
 
   if (body.image_url?.trim()) {

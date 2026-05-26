@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PostViewsCounter } from "./PostViewsCounter";
+import { DescriptionText } from "./DescriptionText";
 import type { PostPublic } from "@/lib/types";
 import { categoryLabel, formatRelativeTime } from "@/lib/labels";
 import { RevealContacts } from "./RevealContacts";
@@ -60,9 +61,10 @@ export function PostCard({ post }: PostCardProps) {
           </h2>
         </Link>
 
-        <p className="line-clamp-4 flex-1 whitespace-pre-wrap text-sm leading-relaxed text-neutral-300 md:line-clamp-3 lg:line-clamp-4">
-          {post.description}
-        </p>
+        <DescriptionText
+          text={post.description}
+          className="line-clamp-4 flex-1 text-sm text-neutral-300 md:line-clamp-3 lg:line-clamp-4"
+        />
 
         {post.bank_name && (
           <p className="text-xs text-neutral-500">Банк: {post.bank_name}</p>
