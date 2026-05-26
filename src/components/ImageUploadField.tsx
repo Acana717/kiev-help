@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { MAX_IMAGE_BYTES } from "@/lib/constants";
+import { IMAGE_UPLOAD_UNAVAILABLE_MESSAGE } from "@/lib/messages";
+import { isBrowserSupabaseConfigured } from "@/lib/supabaseClient";
 
 interface ImageUploadFieldProps {
   file: File | null;
@@ -19,6 +21,7 @@ export function ImageUploadField({
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const uploadAvailable = isBrowserSupabaseConfigured();
 
   function handleFile(next: File | null) {
     setLocalError(null);
@@ -75,7 +78,7 @@ export function ImageUploadField({
             </button>
           </div>
         </div>
-      ) : (
+      ) : uploadAvailable ? (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -84,6 +87,16 @@ export function ImageUploadField({
           <span className="text-sm font-medium text-foreground">Додати фото</span>
           <span className="text-xs text-neutral-500">JPEG, PNG, WebP · до 5 МБ</span>
         </button>
+      ) : (
+        <div
+          className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-800/90 bg-black/20 px-6 py-10 text-center lg:min-h-[280px] lg:py-16"
+          aria-disabled
+        >
+          <span className="text-sm font-medium text-neutral-400">Додати фото</span>
+          <span className="text-xs text-neutral-500">
+            {IMAGE_UPLOAD_UNAVAILABLE_MESSAGE}
+          </span>
+        </div>
       )}
 
       <input
@@ -91,10 +104,11 @@ export function ImageUploadField({
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif"
         className="sr-only"
+        disabled={!uploadAvailable}
         onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
       />
 
-      {previewUrl && (
+      {previewUrl && uploadAvailable && (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}

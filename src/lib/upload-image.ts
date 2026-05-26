@@ -3,6 +3,7 @@ import {
   MAX_IMAGE_BYTES,
   POST_IMAGES_BUCKET,
 } from "./constants";
+import { IMAGE_UPLOAD_UNAVAILABLE_MESSAGE } from "./messages";
 import { getBrowserClient } from "./supabaseClient";
 
 export async function uploadPostImage(
@@ -18,7 +19,7 @@ export async function uploadPostImage(
 
   const supabase = getBrowserClient();
   if (!supabase) {
-    return { error: "Supabase не налаштовано. Перевірте .env.local" };
+    return { error: IMAGE_UPLOAD_UNAVAILABLE_MESSAGE };
   }
 
   const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";

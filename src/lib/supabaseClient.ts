@@ -23,16 +23,20 @@ function isPlaceholder(value: string): boolean {
   );
 }
 
-export function isSupabaseConfigured(): boolean {
+/** Публічні ключі для браузера (Storage, Realtime). Без service role. */
+export function isBrowserSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-  return (
-    !isPlaceholder(url) &&
-    !isPlaceholder(anonKey) &&
-    !isPlaceholder(serviceKey)
-  );
+  return !isPlaceholder(url) && !isPlaceholder(anonKey);
 }
+
+/** Повна конфігурація для API-роутів (потрібен service role на сервері). */
+export function isSupabaseConfigured(): boolean {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  return isBrowserSupabaseConfigured() && !isPlaceholder(serviceKey);
+}
+
+let browserClient: SupabaseClient | null = null;
 
 const EMPTY_QUERY_RESULT = Promise.resolve({
   data: [] as unknown[],
@@ -134,14 +138,19 @@ export function getServiceClientSafe(): SupabaseClient {
 }
 
 export function getBrowserClient(): SupabaseClient | null {
-  if (!isSupabaseConfigured()) {
+  if (!isBrowserSupabaseConfigured()) {
     warnOnce();
     return null;
   }
+  if (browserClient) return browserClient;
+
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    return createClient(url, anonKey);
+    browserClient = createClient(url, anonKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    return browserClient;
   } catch (e) {
     console.error("[kiev-help] Не вдалося створити browser client:", e);
     return null;
