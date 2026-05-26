@@ -6,13 +6,14 @@ import { PageShell } from "@/components/PageShell";
 export default function HomePage() {
   return (
     <PageShell>
-      <div className="space-y-10">
+      <div className="space-y-14 sm:space-y-16">
         <HomeHero />
         <WarningBanner />
-        <section className="border-t border-neutral-800 pt-8">
-          <h2 className="font-bebas mb-4 text-xl tracking-wide text-neutral-400">
-            ОГОЛОШЕННЯ
-          </h2>
+        <section className="kh-divider pt-10 sm:pt-12">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <h2 className="kh-section-title">Оголошення</h2>
+            <span className="kh-meta hidden sm:inline">Оновлюється в реальному часі</span>
+          </div>
           <FeedList />
         </section>
       </div>

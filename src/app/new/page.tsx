@@ -6,20 +6,17 @@ import { PageShell } from "@/components/PageShell";
 export default function NewPostPage() {
   return (
     <PageShell>
-      <div className="space-y-6 pb-6">
+      <div className="space-y-8 pb-8 sm:space-y-10">
         <WarningBanner />
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-[#E5E5E5]"
-        >
+        <Link href="/" className="kh-link inline-flex items-center gap-1 text-sm">
           <span aria-hidden>←</span> До головної
         </Link>
-        <header className="space-y-1">
-          <h1 className="font-bebas text-3xl tracking-wide text-[#E5E5E5]">
-            НОВЕ ОГОЛОШЕННЯ
-          </h1>
-          <p className="text-sm text-neutral-500">
-            Заповніть крок за кроком. Перевірте текст перед публікацією.
+        <header className="space-y-3">
+          <p className="kh-section-kicker">Нове оголошення</p>
+          <h1 className="kh-section-title">Заповніть форму</h1>
+          <p className="max-w-md text-sm leading-relaxed text-neutral-500">
+            Крок за кроком. Перевірте текст перед публікацією — контакти побачать
+            лише за запитом.
           </p>
         </header>
         <CreatePostForm />

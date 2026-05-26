@@ -11,7 +11,13 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "ts-node scripts/verify-ads.ts",
+    "test:ads": "ts-node scripts/verify-real-flow.ts",
+    "db:views": "ts-node scripts/apply-views-migration.ts",
     "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/clean.ps1"
+  },
+  "ts-node": {
+    "project": "tsconfig.scripts.json"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.49.8",
@@ -29,6 +35,7 @@
     "eslint-config-next": "15.1.11",
     "postcss": "8.4.49",
     "tailwindcss": "3.4.16",
+    "ts-node": "10.9.2",
     "typescript": "5.7.2"
   },
   "overrides": {

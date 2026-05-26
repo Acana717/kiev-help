@@ -22,16 +22,14 @@ function ContactsBlock({
   bankName: string | null;
 }) {
   return (
-    <div className="mt-3 space-y-2 rounded-lg border border-neutral-800 bg-black p-3 text-sm animate-fade-in">
-      <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">
-        Контакти та реквізити
-      </p>
+    <div className="animate-fade-in space-y-3 rounded-xl border border-neutral-800/90 bg-black p-4 text-sm">
+      <p className="kh-label">Контакти та реквізити</p>
       {revealed.phone && (
         <p>
           <span className="text-neutral-500">Телефон: </span>
           <a
             href={`tel:${revealed.phone?.replace(/\s/g, "") ?? ""}`}
-            className="font-semibold text-[#E5E5E5] contact-mask"
+            className="contact-mask font-semibold text-foreground transition-colors hover:text-white"
           >
             {revealed.phone}
           </a>
@@ -48,7 +46,7 @@ function ContactsBlock({
             }
             target="_blank"
             rel="noopener noreferrer"
-            className="break-all text-[#E5E5E5] underline"
+            className="break-all text-foreground underline decoration-neutral-700 underline-offset-4 transition-colors hover:decoration-foreground"
           >
             {revealed.telegram}
           </a>
@@ -59,7 +57,7 @@ function ContactsBlock({
           <span className="text-neutral-500">
             Картка{bankName ? ` (${bankName})` : ""}:{" "}
           </span>
-          <span className="font-mono font-semibold text-[#E5E5E5] contact-mask select-all">
+          <span className="contact-mask select-all font-mono font-semibold text-foreground">
             {revealed.card_number}
           </span>
         </p>
@@ -71,7 +69,7 @@ function ContactsBlock({
             href={revealed.jar_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="break-all text-[#E5E5E5] underline"
+            className="break-all text-foreground underline decoration-neutral-700 underline-offset-4"
           >
             Відкрити посилання
           </a>
@@ -126,21 +124,21 @@ export function RevealContacts({
   }
 
   return (
-    <div className="mt-3">
+    <div>
       <button
         type="button"
         onClick={handleReveal}
         disabled={loading}
-        className="w-full rounded-lg border border-neutral-600 bg-black px-3 py-2.5 text-sm font-medium text-[#E5E5E5] transition hover:border-[#E5E5E5] disabled:opacity-50"
+        className="kh-btn-secondary"
       >
         {loading ? "Завантаження…" : "Показати контакти та реквізити"}
       </button>
       {error && (
-        <p className="mt-1 text-xs text-red-400" role="alert">
+        <p className="mt-2 text-xs text-red-400" role="alert">
           {error}
         </p>
       )}
-      <p className="mt-1 text-xs text-neutral-600">
+      <p className="mt-2 text-xs leading-relaxed text-neutral-600">
         Контакти приховані від автоматичного збору. Відкривайте лише після
         перевірки оголошення.
       </p>

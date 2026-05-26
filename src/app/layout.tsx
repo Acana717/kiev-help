@@ -35,26 +35,33 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uk" className={`${bebas.variable} ${inter.variable}`}>
-      <body className="min-h-screen flex flex-col bg-black">
-        <header className="sticky top-0 z-40 border-b border-neutral-800 bg-black/90 backdrop-blur-sm">
-          <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-4">
+      <body className="flex min-h-screen flex-col bg-black">
+        <header className="sticky top-0 z-40 border-b border-neutral-800/80 bg-black/85 backdrop-blur-md">
+          <div className="kh-container flex items-center justify-between gap-4 py-5">
             <Link
               href="/"
-              className="font-bebas text-2xl tracking-wide text-[#E5E5E5] hover:text-white"
+              className="font-bebas text-2xl tracking-wide text-foreground transition-colors duration-200 hover:text-white sm:text-3xl"
             >
               KYIVHELP
             </Link>
             <Link
               href="/new"
-              className="text-xs font-medium uppercase tracking-widest text-neutral-400 transition hover:text-[#E5E5E5]"
+              className="rounded-full border border-neutral-800 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-400 transition-all duration-200 hover:border-neutral-600 hover:text-foreground"
             >
               + Оголошення
             </Link>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6">{children}</main>
-        <footer className="border-t border-neutral-800 py-5 text-center text-xs text-neutral-500">
-          KYIVHELP · Перевіряйте кожен контакт перед допомогою
+        <main className="kh-container flex-1 py-8 sm:py-10">{children}</main>
+        <footer className="border-t border-neutral-800/80 py-8">
+          <div className="kh-container space-y-2 text-center">
+            <p className="font-bebas text-sm tracking-[0.2em] text-neutral-600">
+              KYIVHELP
+            </p>
+            <p className="text-xs leading-relaxed text-neutral-500">
+              Перевіряйте кожен контакт перед допомогою · Київ · Взаємодопомога
+            </p>
+          </div>
         </footer>
       </body>
     </html>

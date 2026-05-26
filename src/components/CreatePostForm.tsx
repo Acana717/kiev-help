@@ -144,20 +144,18 @@ export function CreatePostForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="animate-form-enter space-y-5 pb-8">
-      <section className="animate-slide-up rounded-lg border border-neutral-800 bg-[#111111] p-4 sm:p-5">
-        <h2 className="font-bebas text-sm tracking-wide text-neutral-500">КРОК 1</h2>
-        <p className="mt-1 font-bebas text-xl tracking-wide text-[#E5E5E5]">
-          Що вам потрібно?
-        </p>
-        <div className="mt-4 grid grid-cols-1 gap-3">
+    <form onSubmit={handleSubmit} className="animate-form-enter space-y-6 pb-10">
+      <section className="kh-card animate-slide-up">
+        <h2 className="kh-section-kicker">Крок 1</h2>
+        <p className="mt-2 kh-section-title text-xl sm:text-2xl">Що вам потрібно?</p>
+        <div className="mt-5 grid grid-cols-1 gap-3">
           {POST_TYPES.map((t) => (
             <label
               key={t.value}
-              className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-4 transition ${
+              className={`flex cursor-pointer items-center gap-4 rounded-xl border px-5 py-4 transition-all duration-200 ease-out ${
                 postType === t.value
-                  ? "border-[#E5E5E5] bg-black"
-                  : "border-neutral-800 hover:border-neutral-600"
+                  ? "border-foreground/30 bg-black shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset]"
+                  : "border-neutral-800/90 hover:border-neutral-600"
               }`}
             >
               <input
@@ -168,19 +166,19 @@ export function CreatePostForm() {
                 onChange={() => setPostType(t.value as PostType)}
                 className="h-5 w-5 shrink-0"
               />
-              <span className="text-base text-[#E5E5E5]">{t.label}</span>
+              <span className="text-base text-foreground">{t.label}</span>
             </label>
           ))}
         </div>
       </section>
 
       <section
-        className="animate-slide-up rounded-lg border border-neutral-800 bg-[#111111] p-4 sm:p-5"
+        className="kh-card animate-slide-up"
         style={{ animationDelay: "50ms" }}
       >
-        <h2 className="font-bebas text-sm tracking-wide text-neutral-500">КРОК 2</h2>
-        <p className="mt-1 font-bebas text-xl tracking-wide text-[#E5E5E5]">Деталі</p>
-        <div className="mt-4 space-y-4">
+        <h2 className="kh-section-kicker">Крок 2</h2>
+        <p className="mt-2 kh-section-title text-xl sm:text-2xl">Деталі</p>
+        <div className="mt-5 space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Категорія" htmlFor="category" required>
               <select
@@ -252,17 +250,17 @@ export function CreatePostForm() {
       </section>
 
       <section
-        className="animate-slide-up rounded-lg border border-neutral-800 bg-[#111111] p-4 sm:p-5"
+        className="kh-card animate-slide-up"
         style={{ animationDelay: "100ms" }}
       >
-        <h2 className="font-bebas text-sm tracking-wide text-neutral-500">КРОК 3</h2>
-        <p className="mt-1 font-bebas text-xl tracking-wide text-[#E5E5E5]">
+        <h2 className="kh-section-kicker">Крок 3</h2>
+        <p className="mt-2 kh-section-title text-xl sm:text-2xl">
           Як з вами зв&apos;язатися
         </p>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-2 text-sm leading-relaxed text-neutral-500">
           Контакти побачать лише після натискання «Показати контакти» у стрічці
         </p>
-        <div className="mt-4 space-y-4">
+        <div className="mt-5 space-y-5">
           <FormField
             label="Телефон"
             htmlFor="phone"
@@ -294,21 +292,21 @@ export function CreatePostForm() {
       </section>
 
       <section
-        className="animate-slide-up rounded-lg border border-neutral-800 bg-[#111111] p-4 sm:p-5"
+        className="kh-card animate-slide-up"
         style={{ animationDelay: "150ms" }}
       >
-        <label className="flex cursor-pointer items-start gap-3">
+        <label className="flex cursor-pointer items-start gap-4">
           <input
             type="checkbox"
             checked={showPayment}
             onChange={(e) => setShowPayment(e.target.checked)}
-            className="mt-1 h-5 w-5 rounded border-neutral-600 bg-black text-[#E5E5E5]"
+            className="mt-1 h-5 w-5 rounded border-neutral-600 bg-black text-foreground"
           />
           <span>
-            <span className="block text-base text-[#E5E5E5]">
+            <span className="block text-base text-foreground">
               Додати реквізити для допомоги
             </span>
-            <span className="block text-sm text-neutral-500">
+            <span className="mt-1 block text-sm leading-relaxed text-neutral-500">
               Картка або банка — лише якщо потрібні грошові перекази
             </span>
           </span>
@@ -316,7 +314,7 @@ export function CreatePostForm() {
 
         {showPayment && (
           <div className="animate-panel-open overflow-hidden">
-            <div className="mt-4 space-y-4 rounded-lg border border-neutral-800 bg-black p-4">
+            <div className="mt-5 space-y-5 rounded-xl border border-neutral-800/90 bg-black p-5">
                 <FormField
                   label="Номер картки"
                   htmlFor="card"
@@ -363,7 +361,7 @@ export function CreatePostForm() {
       </section>
 
       <section
-        className="animate-slide-up rounded-lg border border-neutral-800 bg-[#111111] p-4 sm:p-5"
+        className="kh-card animate-slide-up"
         style={{ animationDelay: "200ms" }}
       >
         <FormField
@@ -386,7 +384,7 @@ export function CreatePostForm() {
 
       {error && (
         <p
-          className="animate-fade-in rounded-lg border border-neutral-800 bg-[#111111] px-4 py-3 text-sm text-red-400"
+          className="kh-card animate-fade-in border-red-900/40 text-sm text-red-400"
           role="alert"
         >
           {error}
@@ -396,7 +394,7 @@ export function CreatePostForm() {
       <button
         type="submit"
         disabled={loading}
-        className="flex w-full items-center justify-center gap-2 border-2 border-[#E5E5E5] bg-black py-4 text-sm font-medium uppercase tracking-[0.15em] text-white transition hover:bg-[#111111] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+        className="kh-btn-primary w-full disabled:opacity-50"
       >
         {loading ? (
           <>

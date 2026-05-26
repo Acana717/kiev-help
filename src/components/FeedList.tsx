@@ -34,7 +34,6 @@ function hasActiveFilters(filters: FeedFiltersState): boolean {
   );
 }
 
-/** Стрічка прихована лише якщо бекенд недоступний (не просто порожній список). */
 function isFeedBackendUnavailable(
   ok: boolean,
   data: PostsResponse | null,
@@ -88,23 +87,23 @@ export function FeedList() {
   const filtered = hasActiveFilters(filters);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <FeedFilters value={filters} onChange={setFilters} />
       {empty && (
-        <div className="rounded-lg border border-dashed border-neutral-800 bg-[#111111] px-4 py-10 text-center">
-          <p className="text-sm text-[#E5E5E5]">
+        <div className="rounded-2xl border border-dashed border-neutral-800/90 bg-surface/50 px-6 py-14 text-center">
+          <p className="text-base text-foreground">
             {filtered
               ? "За вашими фільтрами оголошень немає"
               : "Поки немає оголошень"}
           </p>
-          <p className="mt-2 text-xs text-neutral-500">
+          <p className="mt-3 text-sm leading-relaxed text-neutral-500">
             {filtered
               ? "Спробуйте змінити фільтри."
               : "Створіть перше оголошення вище."}
           </p>
         </div>
       )}
-      <ul className="space-y-3">
+      <ul className="space-y-5">
         {posts.map((post) => (
           <li key={post.id}>
             <PostCard post={post} />

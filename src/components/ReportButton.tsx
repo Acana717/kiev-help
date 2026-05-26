@@ -15,9 +15,6 @@ const REASONS = [
   { value: "other", label: "Інше" },
 ] as const;
 
-const darkInput =
-  "w-full rounded-lg border border-neutral-800 bg-black px-2 py-1.5 text-xs text-[#E5E5E5]";
-
 export function ReportButton({ postId }: ReportButtonProps) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<string>("scam");
@@ -46,27 +43,27 @@ export function ReportButton({ postId }: ReportButtonProps) {
 
   if (status === "done") {
     return (
-      <p className="text-xs text-neutral-500">Дякуємо. Скаргу передано модераторам.</p>
+      <p className="text-xs leading-relaxed text-neutral-500">
+        Дякуємо. Скаргу передано модераторам.
+      </p>
     );
   }
 
   return (
-    <div className="mt-2 border-t border-neutral-800 pt-2">
+    <div className="kh-divider pt-4">
       {!open ? (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="text-xs text-neutral-500 underline hover:text-[#E5E5E5]"
-        >
+        <button type="button" onClick={() => setOpen(true)} className="kh-btn-ghost">
           Поскаржитися
         </button>
       ) : (
-        <div className="space-y-2 rounded-lg border border-neutral-800 bg-black p-2">
-          <p className="text-xs font-medium text-neutral-400">Скарга на оголошення</p>
+        <div className="space-y-3 rounded-xl border border-neutral-800/90 bg-black p-4">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">
+            Скарга на оголошення
+          </p>
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className={darkInput}
+            className="kh-input !mt-0 text-xs"
           >
             {REASONS.map((r) => (
               <option key={r.value} value={r.value}>
@@ -79,22 +76,22 @@ export function ReportButton({ postId }: ReportButtonProps) {
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             rows={2}
-            className={darkInput}
+            className="kh-input !mt-0 resize-y text-xs"
             maxLength={500}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               type="button"
               onClick={submit}
               disabled={status === "loading"}
-              className="rounded-lg border border-neutral-600 px-2 py-1 text-xs font-medium text-[#E5E5E5]"
+              className="rounded-xl border border-neutral-700 px-3 py-2 text-xs font-medium text-foreground transition-all duration-200 hover:border-foreground/30"
             >
               Надіслати
             </button>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-xs text-neutral-500"
+              className="text-xs text-neutral-500 transition-colors hover:text-foreground"
             >
               Скасувати
             </button>

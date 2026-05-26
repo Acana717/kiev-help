@@ -36,6 +36,7 @@ CREATE TABLE posts (
   jar_link_enc TEXT,
   status post_status NOT NULL DEFAULT 'active',
   report_count INT NOT NULL DEFAULT 0,
+  views_count INT NOT NULL DEFAULT 0,
   client_fingerprint TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -117,6 +118,45 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER on_report_auto_hide
   AFTER INSERT ON reports
   FOR EACH ROW EXECUTE FUNCTION auto_hide_reported_posts();
+
+-- =============================================================================
+-- Лічильник переглядів (atomic RPC + Realtime)
+-- =============================================================================
+CREATE OR REPLACE FUNCTION increment_post_views(p_post_id UUID)
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_count INTEGER;
+BEGIN
+  UPDATE posts
+  SET views_count = views_count + 1
+  WHERE id = p_post_id AND status = 'active'
+  RETURNING views_count INTO v_count;
+
+  RETURN v_count;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION increment_post_views(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION increment_post_views(UUID) TO service_role;
+
+ALTER TABLE posts REPLICA IDENTITY FULL;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'posts'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE posts;
+  END IF;
+END $$;
 
 -- =============================================================================
 -- Row Level Security (RLS)

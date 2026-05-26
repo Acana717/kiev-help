@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
         let query = supabase
           .from("posts")
           .select(
-            "id, post_type, category, district, title, description, bank_name, status, report_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc"
+            "id, post_type, category, district, title, description, bank_name, status, report_count, views_count, created_at, expires_at, phone_enc, telegram_enc, card_number_enc, jar_link_enc"
           )
           .eq("status", "active")
           .order("created_at", { ascending: false })

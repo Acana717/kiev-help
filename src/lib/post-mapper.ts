@@ -10,6 +10,7 @@ export interface PostRow {
   bank_name?: string | null;
   status?: string;
   report_count?: number;
+  views_count?: number;
   created_at?: string;
   expires_at?: string | null;
   phone_enc?: string | null;
@@ -40,6 +41,7 @@ export function mapPostRow(row: PostRow | null | undefined): PublicPostListItem 
     bank_name: row.bank_name ?? null,
     status: row.status ?? "active",
     report_count: row.report_count ?? 0,
+    views_count: row.views_count ?? 0,
     created_at: row.created_at ?? new Date().toISOString(),
     expires_at: row.expires_at ?? null,
     has_phone: !!row.phone_enc,

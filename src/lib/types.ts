@@ -17,6 +17,7 @@ export interface PostPublic {
   bank_name: string | null;
   status: string;
   report_count: number;
+  views_count: number;
   created_at: string;
   expires_at: string | null;
 }

@@ -8,6 +8,69 @@
   }
   body {
     @apply bg-black font-sans text-foreground antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+}
+
+@layer components {
+  .kh-container {
+    @apply mx-auto w-full max-w-xl px-5 sm:px-6;
+  }
+
+  .kh-card {
+    @apply rounded-2xl border border-neutral-800/80 bg-surface p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_8px_32px_rgba(0,0,0,0.35)] transition-all duration-200 ease-out sm:p-6;
+  }
+
+  .kh-card-interactive {
+    @apply kh-card hover:border-neutral-700/90 hover:shadow-[0_12px_40px_rgba(0,0,0,0.45)];
+  }
+
+  .kh-badge {
+    @apply inline-flex items-center rounded-full border border-neutral-800 bg-black/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-400;
+  }
+
+  .kh-meta {
+    @apply text-xs leading-relaxed text-neutral-500;
+  }
+
+  .kh-label {
+    @apply block text-xs font-medium uppercase tracking-[0.12em] text-neutral-500;
+  }
+
+  .kh-section-title {
+    @apply font-bebas text-2xl tracking-wide text-foreground sm:text-3xl;
+  }
+
+  .kh-section-kicker {
+    @apply font-bebas text-sm tracking-[0.2em] text-neutral-500;
+  }
+
+  .kh-link {
+    @apply text-neutral-500 transition-colors duration-200 ease-out hover:text-foreground;
+  }
+
+  .kh-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-foreground/25 bg-black px-8 py-4 text-sm font-medium uppercase tracking-[0.16em] text-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset] transition-all duration-200 ease-out hover:border-foreground/50 hover:bg-surface active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .kh-btn-secondary {
+    @apply w-full rounded-xl border border-neutral-700/80 bg-black px-4 py-3.5 text-sm font-medium text-foreground transition-all duration-200 ease-out hover:border-foreground/30 hover:bg-surface active:scale-[0.99] disabled:opacity-50;
+  }
+
+  .kh-btn-ghost {
+    @apply text-xs text-neutral-500 underline decoration-neutral-700 underline-offset-4 transition-colors duration-200 ease-out hover:text-foreground hover:decoration-neutral-500;
+  }
+
+  .kh-input {
+    @apply mt-2 w-full rounded-xl border border-neutral-800/90 bg-black px-4 py-3 text-base text-foreground placeholder:text-neutral-600 transition-all duration-200 ease-out focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-700/40;
+  }
+
+  .kh-input-error {
+    @apply border-red-900/80 focus:border-red-700 focus:ring-red-900/30;
+  }
+
+  .kh-divider {
+    @apply border-t border-neutral-800/80;
   }
 }
 
