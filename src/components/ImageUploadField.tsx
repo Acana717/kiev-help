@@ -1,16 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { MAX_IMAGE_BYTES } from "@/lib/constants";
-import { IMAGE_UPLOAD_UNAVAILABLE_MESSAGE } from "@/lib/messages";
-import { isBrowserSupabaseConfigured } from "@/lib/supabaseClient";
 
 interface ImageUploadFieldProps {
   file: File | null;
   previewUrl: string | null;
   onChange: (file: File | null, previewUrl: string | null) => void;
   error?: string;
+  disabled?: boolean;
 }
 
 export function ImageUploadField({
@@ -18,10 +17,24 @@ export function ImageUploadField({
   previewUrl,
   onChange,
   error,
+  disabled = false,
 }: ImageUploadFieldProps) {
+  const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [localError, setLocalError] = useState<string | null>(null);
-  const uploadAvailable = isBrowserSupabaseConfigured();
+
+  function openFilePicker() {
+    if (disabled) return;
+
+    const input = inputRef.current;
+    if (!input) {
+      console.error("[kiev-help] File input ref is missing");
+      return;
+    }
+
+    input.value = "";
+    input.click();
+  }
 
   function handleFile(next: File | null) {
     setLocalError(null);
@@ -51,9 +64,22 @@ export function ImageUploadField({
   }
 
   const showError = error ?? localError;
+  const pickerClassName = disabled
+    ? "pointer-events-none opacity-50"
+    : "cursor-pointer transition-all duration-200 hover:border-neutral-500 hover:bg-surface";
 
   return (
     <div className="space-y-3">
+      <input
+        id={inputId}
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        className="sr-only"
+        disabled={disabled}
+        onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+      />
+
       {previewUrl ? (
         <div className="relative overflow-hidden rounded-xl border border-neutral-800/90">
           <div className="relative aspect-[16/10] w-full bg-black md:aspect-video lg:aspect-square">
@@ -72,47 +98,34 @@ export function ImageUploadField({
             <button
               type="button"
               onClick={clear}
-              className="text-xs text-neutral-400 transition-colors hover:text-foreground"
+              disabled={disabled}
+              className="text-xs text-neutral-400 transition-colors hover:text-foreground disabled:opacity-50"
             >
               Видалити
             </button>
           </div>
         </div>
-      ) : uploadAvailable ? (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700/80 bg-black/40 px-6 py-10 text-center transition-all duration-200 hover:border-neutral-500 hover:bg-surface lg:min-h-[280px] lg:py-16"
+      ) : (
+        <label
+          htmlFor={inputId}
+          onClick={(e) => {
+            if (disabled) {
+              e.preventDefault();
+            }
+          }}
+          className={`flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700/80 bg-black/40 px-6 py-10 text-center lg:min-h-[280px] lg:py-16 ${pickerClassName}`}
         >
           <span className="text-sm font-medium text-foreground">Додати фото</span>
           <span className="text-xs text-neutral-500">JPEG, PNG, WebP · до 5 МБ</span>
-        </button>
-      ) : (
-        <div
-          className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-800/90 bg-black/20 px-6 py-10 text-center lg:min-h-[280px] lg:py-16"
-          aria-disabled
-        >
-          <span className="text-sm font-medium text-neutral-400">Додати фото</span>
-          <span className="text-xs text-neutral-500">
-            {IMAGE_UPLOAD_UNAVAILABLE_MESSAGE}
-          </span>
-        </div>
+        </label>
       )}
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-        className="sr-only"
-        disabled={!uploadAvailable}
-        onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
-      />
-
-      {previewUrl && uploadAvailable && (
+      {previewUrl && (
         <button
           type="button"
-          onClick={() => inputRef.current?.click()}
-          className="kh-link text-xs"
+          onClick={openFilePicker}
+          disabled={disabled}
+          className="kh-link text-xs disabled:opacity-50"
         >
           Замінити фото
         </button>

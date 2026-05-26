@@ -241,9 +241,13 @@ export function CreatePostForm() {
             <ImageUploadField
               file={imageFile}
               previewUrl={imagePreview}
+              disabled={loading}
               onChange={(file, preview) => {
                 setImageFile(file);
                 setImagePreview(preview);
+                if (errors.image) {
+                  setErrors((prev) => ({ ...prev, image: undefined }));
+                }
               }}
             />
           </FormField>

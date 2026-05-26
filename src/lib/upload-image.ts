@@ -1,42 +1,37 @@
-import {
-  ALLOWED_IMAGE_TYPES,
-  MAX_IMAGE_BYTES,
-  POST_IMAGES_BUCKET,
-} from "./constants";
+import { fetchJson } from "./fetch-json";
+import { validateImageFileMeta } from "./image-upload-validation";
 import { IMAGE_UPLOAD_UNAVAILABLE_MESSAGE } from "./messages";
-import { getBrowserClient } from "./supabaseClient";
 
 export async function uploadPostImage(
   file: File
 ): Promise<{ url?: string; error?: string }> {
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type as (typeof ALLOWED_IMAGE_TYPES)[number])) {
-    return { error: "Дозволені формати: JPEG, PNG, WebP, GIF" };
+  const validationError = validateImageFileMeta(file);
+  if (validationError) {
+    return { error: validationError };
   }
 
-  if (file.size > MAX_IMAGE_BYTES) {
-    return { error: "Максимальний розмір фото — 5 МБ" };
-  }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const supabase = getBrowserClient();
-  if (!supabase) {
+  try {
+    const { ok, data, error } = await fetchJson<{ url?: string }>(
+      "/api/upload-image",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!ok || !data?.url) {
+      console.error("[kiev-help] Image upload failed:", error ?? "empty response");
+      return {
+        error: error ?? IMAGE_UPLOAD_UNAVAILABLE_MESSAGE,
+      };
+    }
+
+    return { url: data.url };
+  } catch (err) {
+    console.error("[kiev-help] Image upload request error:", err);
     return { error: IMAGE_UPLOAD_UNAVAILABLE_MESSAGE };
   }
-
-  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-  const path = `uploads/${crypto.randomUUID()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(POST_IMAGES_BUCKET)
-    .upload(path, file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: file.type,
-    });
-
-  if (uploadError) {
-    return { error: uploadError.message };
-  }
-
-  const { data } = supabase.storage.from(POST_IMAGES_BUCKET).getPublicUrl(path);
-  return { url: data.publicUrl };
 }
