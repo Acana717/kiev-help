@@ -162,35 +162,74 @@ export function CreatePostForm() {
       <section className="kh-card animate-slide-up">
         <h2 className="kh-section-kicker">Крок 1</h2>
         <p className="mt-2 kh-section-title text-xl sm:text-2xl">Деталі оголошення</p>
-        <div className="mt-5 space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormField label="Категорія" htmlFor="category" required>
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as ListingCategory)}
-                className={fieldClass(false)}
-              >
-                {LISTING_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+        <div className="mt-5 space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0">
+          <div className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              <FormField label="Категорія" htmlFor="category" required>
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as ListingCategory)}
+                  className={fieldClass(false)}
+                >
+                  {LISTING_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+              <FormField label="Район Києва" htmlFor="district" required>
+                <select
+                  id="district"
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  className={fieldClass(false)}
+                >
+                  {KYIV_DISTRICTS.filter((d) => d !== "Увесь Київ").map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+            </div>
+
+            <FormField
+              label="Заголовок"
+              htmlFor="title"
+              required
+              error={submitted ? errors.title : undefined}
+            >
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={120}
+                placeholder="Наприклад: потрібен транспорт до лікарні"
+                className={fieldClass(!!(submitted && errors.title))}
+                aria-invalid={!!(submitted && errors.title)}
+              />
             </FormField>
-            <FormField label="Район Києва" htmlFor="district" required>
-              <select
-                id="district"
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                className={fieldClass(false)}
-              >
-                {KYIV_DISTRICTS.filter((d) => d !== "Увесь Київ").map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
+
+            <FormField
+              label="Опис ситуації"
+              htmlFor="description"
+              required
+              error={submitted ? errors.description : undefined}
+              hint="Адреса, час, що саме потрібно — чим конкретніше, тим швидше допоможуть"
+            >
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={5}
+                maxLength={2000}
+                placeholder="Опишіть ситуацію простими словами..."
+                className={`${fieldClass(!!(submitted && errors.description))} min-h-[120px] resize-y lg:min-h-[160px]`}
+                aria-invalid={!!(submitted && errors.description)}
+              />
             </FormField>
           </div>
 
@@ -202,43 +241,6 @@ export function CreatePostForm() {
                 setImageFile(file);
                 setImagePreview(preview);
               }}
-            />
-          </FormField>
-
-          <FormField
-            label="Заголовок"
-            htmlFor="title"
-            required
-            error={submitted ? errors.title : undefined}
-          >
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={120}
-              placeholder="Наприклад: потрібен транспорт до лікарні"
-              className={fieldClass(!!(submitted && errors.title))}
-              aria-invalid={!!(submitted && errors.title)}
-            />
-          </FormField>
-
-          <FormField
-            label="Опис ситуації"
-            htmlFor="description"
-            required
-            error={submitted ? errors.description : undefined}
-            hint="Адреса, час, що саме потрібно — чим конкретніше, тим швидше допоможуть"
-          >
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              maxLength={2000}
-              placeholder="Опишіть ситуацію простими словами..."
-              className={`${fieldClass(!!(submitted && errors.description))} min-h-[120px] resize-y`}
-              aria-invalid={!!(submitted && errors.description)}
             />
           </FormField>
         </div>

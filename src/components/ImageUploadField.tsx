@@ -53,7 +53,7 @@ export function ImageUploadField({
     <div className="space-y-3">
       {previewUrl ? (
         <div className="relative overflow-hidden rounded-xl border border-neutral-800/90">
-          <div className="relative aspect-[16/10] w-full bg-black">
+          <div className="relative aspect-[16/10] w-full bg-black md:aspect-video lg:aspect-square">
             <Image
               src={previewUrl}
               alt="Прев'ю фото"
@@ -79,7 +79,7 @@ export function ImageUploadField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700/80 bg-black/40 px-6 py-10 text-center transition-all duration-200 hover:border-neutral-500 hover:bg-surface"
+          className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700/80 bg-black/40 px-6 py-10 text-center transition-all duration-200 hover:border-neutral-500 hover:bg-surface lg:min-h-[280px] lg:py-16"
         >
           <span className="text-sm font-medium text-foreground">Додати фото</span>
           <span className="text-xs text-neutral-500">JPEG, PNG, WebP · до 5 МБ</span>

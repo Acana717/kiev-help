@@ -48,6 +48,23 @@ function isFeedBackendUnavailable(
   return data.degraded === true;
 }
 
+function EmptyFeed({ filtered }: { filtered: boolean }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-neutral-800/90 bg-surface/50 px-6 py-14 text-center lg:col-span-full">
+      <p className="text-base text-foreground">
+        {filtered
+          ? "За вашими фільтрами оголошень немає"
+          : "Поки немає оголошень"}
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-neutral-500">
+        {filtered
+          ? "Спробуйте змінити фільтри."
+          : "Створіть перше оголошення вище."}
+      </p>
+    </div>
+  );
+}
+
 export function FeedList() {
   const router = useRouter();
   const pathname = usePathname();
@@ -106,29 +123,34 @@ export function FeedList() {
   const filtered = hasActiveFilters(filters);
 
   return (
-    <div className="space-y-6">
-      <FeedFilters value={filters} onChange={updateFilters} />
-      {empty && (
-        <div className="rounded-2xl border border-dashed border-neutral-800/90 bg-surface/50 px-6 py-14 text-center">
-          <p className="text-base text-foreground">
-            {filtered
-              ? "За вашими фільтрами оголошень немає"
-              : "Поки немає оголошень"}
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-neutral-500">
-            {filtered
-              ? "Спробуйте змінити фільтри."
-              : "Створіть перше оголошення вище."}
-          </p>
+    <div className="lg:grid lg:grid-cols-[minmax(260px,300px)_minmax(0,1fr)] lg:items-start lg:gap-8 xl:gap-10">
+      <aside className="hidden lg:block">
+        <div className="sticky top-24">
+          <FeedFilters
+            value={filters}
+            onChange={updateFilters}
+            layout="sidebar"
+          />
         </div>
-      )}
-      <ul className="space-y-5">
-        {posts.map((post) => (
-          <li key={post.id}>
-            <PostCard post={post} />
-          </li>
-        ))}
-      </ul>
+      </aside>
+
+      <div className="min-w-0 space-y-6">
+        <div className="lg:hidden">
+          <FeedFilters value={filters} onChange={updateFilters} />
+        </div>
+
+        {empty ? (
+          <EmptyFeed filtered={filtered} />
+        ) : (
+          <ul className="kh-feed-grid">
+            {posts.map((post) => (
+              <li key={post.id} className="min-w-0">
+                <PostCard post={post} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

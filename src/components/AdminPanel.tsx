@@ -80,8 +80,9 @@ export function AdminPanel() {
         <p className="kh-meta">{posts.length} записів</p>
       </div>
 
-      <div className="kh-card overflow-x-auto p-0 sm:p-0">
-        <table className="w-full min-w-[640px] text-left text-sm">
+      <div className="-mx-5 overflow-x-auto sm:-mx-6 lg:mx-0 lg:overflow-visible">
+        <div className="kh-card min-w-0 overflow-hidden p-0 sm:p-0 lg:overflow-visible">
+        <table className="w-full min-w-[640px] text-left text-sm lg:min-w-0">
           <thead>
             <tr className="border-b border-neutral-800/90 text-xs uppercase tracking-[0.1em] text-neutral-500">
               <th className="px-4 py-3 font-medium sm:px-6">Оголошення</th>
@@ -136,6 +137,7 @@ export function AdminPanel() {
             Оголошень немає
           </p>
         )}
+        </div>
       </div>
 
       <p className="text-xs leading-relaxed text-neutral-600">

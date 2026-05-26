@@ -79,20 +79,20 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
   }
 
   return (
-    <article className="space-y-6">
+    <article className="kh-detail-wrap space-y-6">
       <Link href="/" className="kh-link inline-flex items-center gap-1 text-sm">
         <span aria-hidden>←</span> До стрічки
       </Link>
 
       <div className="kh-card overflow-hidden p-0">
         {post.image_url && (
-          <div className="relative aspect-[16/10] w-full bg-black">
+          <div className="relative aspect-[16/10] w-full bg-black md:aspect-video lg:max-h-[420px] lg:aspect-[21/9]">
             <Image
               src={post.image_url}
               alt=""
               fill
               className="object-cover"
-              sizes="(max-width: 576px) 100vw, 576px"
+              sizes="(max-width: 768px) 100vw, 768px"
               priority
             />
           </div>

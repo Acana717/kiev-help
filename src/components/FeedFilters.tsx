@@ -8,21 +8,28 @@ export type { FeedFiltersState };
 interface FeedFiltersProps {
   value: FeedFiltersState;
   onChange: (next: FeedFiltersState) => void;
+  className?: string;
+  layout?: "stack" | "sidebar";
 }
 
-export function FeedFilters({ value, onChange }: FeedFiltersProps) {
+export function FeedFilters({
+  value,
+  onChange,
+  className = "",
+  layout = "stack",
+}: FeedFiltersProps) {
   const set = (patch: Partial<FeedFiltersState>) =>
     onChange({ ...value, ...patch });
 
-  const clearAll = () =>
-    onChange({ category: "", district: "", q: "" });
+  const clearAll = () => onChange({ category: "", district: "", q: "" });
 
   const hasFilters = !!(value.category || value.district || value.q.trim());
+  const isSidebar = layout === "sidebar";
 
   return (
-    <div className="kh-card space-y-5">
+    <div className={`kh-card space-y-5 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="kh-label">Фільтри стрічки</p>
+        <p className="kh-label">{isSidebar ? "Фільтри" : "Фільтри стрічки"}</p>
         {hasFilters && (
           <button
             type="button"
@@ -46,7 +53,7 @@ export function FeedFilters({ value, onChange }: FeedFiltersProps) {
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className={`grid gap-4 ${isSidebar ? "grid-cols-1" : "sm:grid-cols-2"}`}>
         <label className="block">
           <span className="kh-label">Категорія</span>
           <select
@@ -78,13 +85,15 @@ export function FeedFilters({ value, onChange }: FeedFiltersProps) {
         </label>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap gap-2 ${isSidebar ? "flex-col sm:flex-row lg:flex-col" : ""}`}>
         {LISTING_CATEGORIES.map((c) => (
           <button
             key={c}
             type="button"
             onClick={() => set({ category: value.category === c ? "" : c })}
-            className={`rounded-full border px-3 py-1.5 text-xs transition-all duration-200 ${
+            className={`rounded-full border px-3 py-1.5 text-left text-xs transition-all duration-200 ${
+              isSidebar ? "w-full sm:w-auto lg:w-full" : ""
+            } ${
               value.category === c
                 ? "border-foreground/40 bg-black text-foreground"
                 : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-foreground"
